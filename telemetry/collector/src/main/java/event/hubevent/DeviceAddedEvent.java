@@ -3,7 +3,7 @@ package event.hubevent;
 import device.DeviceType;
 
 public class DeviceAddedEvent extends HubEvent {
-    DeviceType deviceType;
+    private DeviceType deviceType;
 
     @Override
     public HubEventType getType() {
