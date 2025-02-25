@@ -5,7 +5,8 @@ package telemetry.message.event.sensorevent;
 import "google/protobuf/timestamp.proto";
 
 option java_multiple_files = true;
-option java_package = "ru.yandex.practicum.grpc.telemetry.event.sensorevent";
+option java_package = "ru.yandex.practicum.grpc.telemetry.event";
+
 message SensorEventProto {
   string id = 1;
   google.protobuf.Timestamp timestamp = 2;
