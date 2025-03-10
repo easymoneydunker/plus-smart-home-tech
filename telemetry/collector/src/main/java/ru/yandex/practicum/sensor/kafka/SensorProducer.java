@@ -9,20 +9,21 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @Slf4j
 public class SensorProducer {
-    final Producer<String, SensorEventAvro> producer;
+    Producer<String, SensorEventAvro> producer;
     final String topic;
 
-    public SensorProducer(Producer<String, SensorEventAvro> producer, String topic) {
-        this.producer = producer;
-        this.topic = topic;
-    }
-
     public void sendMessage(SensorEventAvro eventAvro) {
+        log.info("Отправление события сенсора {}", eventAvro.getId());
+        log.debug("Отправление события сенсора {}", eventAvro);
+
         ProducerRecord<String, SensorEventAvro> producerRecord = new ProducerRecord<>(topic, eventAvro);
 
         producer.send(producerRecord);
         producer.flush();
+
+        log.info("Успешно отправлено событие сенсора {}", eventAvro.getId());
     }
 }

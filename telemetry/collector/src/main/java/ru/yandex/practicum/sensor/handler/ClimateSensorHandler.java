@@ -13,13 +13,10 @@ import ru.yandex.practicum.sensor.kafka.SensorProducer;
 import java.time.Instant;
 
 @Component
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ClimateSensorHandler implements SensorHandler {
     final SensorProducer producer;
-
-    public ClimateSensorHandler(SensorProducer producer) {
-        this.producer = producer;
-    }
 
     @Override
     public SensorEventProto.PayloadCase getMessageType() {
