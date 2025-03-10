@@ -7,4 +7,8 @@ public class SensorAvroDeserializer extends BaseAvroDeserializer<SensorEventAvro
     public SensorAvroDeserializer(Schema schema) {
         super(schema);
     }
+
+    public SensorAvroDeserializer() {
+        super(null);
+    }
 }

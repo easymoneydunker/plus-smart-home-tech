@@ -9,6 +9,7 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.VoidDeserializer;
 import org.apache.kafka.common.serialization.VoidSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,17 +29,11 @@ import java.util.Properties;
 @PropertySource("classpath:application.yaml")
 public class SnapshotKafkaConfig {
     @Value("${kafka.constants.url}")
-    private final String url;
+    private String url;
     @Value("${kafka.constants.sensor.topic}")
-    private final String readTopic;
+    private String readTopic;
     @Value("${kafka.constants.snapshot.topic}")
-    private final String writeTopic;
-
-    public SnapshotKafkaConfig(String url, String readTopic, String writeTopic) {
-        this.url = url;
-        this.readTopic = readTopic;
-        this.writeTopic = writeTopic;
-    }
+    private String writeTopic;
 
     @Bean
     public AggregatorStarter aggregatorStarter(SnapshotProducer producer, SnapshotHandler handler) {
