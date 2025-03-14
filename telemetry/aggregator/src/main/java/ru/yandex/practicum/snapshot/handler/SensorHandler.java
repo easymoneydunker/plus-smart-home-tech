@@ -13,36 +13,28 @@ import java.util.Optional;
 public abstract class SensorHandler<T> {
     public abstract Class<T> getMessageType();
 
-    Optional<SensorsSnapshotAvro> handle(SensorEventAvro eventAvro, SensorsSnapshotAvro snapshot) {
+    Optional<Map<String, SensorStateAvro>> handle(SensorEventAvro eventAvro, SensorsSnapshotAvro snapshot) {
+        Map<String, SensorStateAvro> states = snapshot.getSensorsState();
+        SensorStateAvro deviceSnapshot;
         log.debug("Processing event for sensor: {}", eventAvro.getId());
 
-        T event = (T) eventAvro.getPayload();
-        Map<String, SensorStateAvro> states = snapshot.getSensorsState();
-        SensorStateAvro deviceSnapshot = states.get(eventAvro.getId());
-
-        if (deviceSnapshot == null) {
-            log.warn("No existing snapshot found for sensor: {}", eventAvro.getId());
-            return Optional.empty();
+        if (!states.isEmpty() && states.containsKey(eventAvro.getId())) {
+            deviceSnapshot = states.get(eventAvro.getId());
+            if (deviceSnapshot == null) {
+                log.warn("No existing snapshot found for sensor: {}", eventAvro.getId());
+                return Optional.empty();
+            }
+            if (deviceSnapshot.getTimestamp().isAfter(eventAvro.getTimestamp()) || deviceSnapshot.getData().equals(eventAvro.getPayload())) {
+                return Optional.empty();
+            }
+        } else {
+            deviceSnapshot = new SensorStateAvro();
         }
+        deviceSnapshot.setTimestamp(eventAvro.getTimestamp());
+        deviceSnapshot.setData(eventAvro.getPayload());
 
-        T oldEvent = (T) deviceSnapshot.getData();
-
-        if (eventAvro.getTimestamp().isBefore(deviceSnapshot.getTimestamp())) {
-            log.debug("Discarding outdated event for sensor: {}", eventAvro.getId());
-            return Optional.empty();
-        }
-
-        if (event.equals(oldEvent)) {
-            log.debug("Ignoring unchanged event for sensor: {}", eventAvro.getId());
-            return Optional.empty();
-        }
-
-        log.info("Updating snapshot for sensor: {}", eventAvro.getId());
-        deviceSnapshot.setData(event);
         states.put(eventAvro.getId(), deviceSnapshot);
-        snapshot.setSensorsState(states);
-        snapshot.setTimestamp(Instant.now());
 
-        return Optional.of(snapshot);
+        return Optional.of(states);
     }
 }
