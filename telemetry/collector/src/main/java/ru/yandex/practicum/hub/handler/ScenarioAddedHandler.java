@@ -33,7 +33,10 @@ public class ScenarioAddedHandler implements HubHandler {
 
         HubEventAvro eventAvro = HubEventAvro.newBuilder()
                 .setHubId(eventProto.getHubId())
-                .setTimestamp(Instant.ofEpochSecond(eventProto.getTimestamp().getSeconds()))
+                .setTimestamp(Instant.ofEpochSecond(
+                        eventProto.getTimestamp().getSeconds(),
+                        eventProto.getTimestamp().getNanos()
+                ))
                 .setPayload(
                         ScenarioAddedEventAvro.newBuilder()
                                 .setName(scenarioAddedEventProto.getName())

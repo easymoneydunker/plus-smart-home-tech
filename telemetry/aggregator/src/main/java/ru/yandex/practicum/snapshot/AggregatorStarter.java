@@ -28,32 +28,29 @@ public class AggregatorStarter {
 
     public void start() {
         try {
+            log.info("Получение данных");
             while (true) {
-                log.info("Получение данных");
-
-                ConsumerRecords<String, SensorEventAvro> records = consumer.poll(Duration.ofMillis(2000));
+                ConsumerRecords<String, SensorEventAvro> records = consumer.poll(Duration.ofMillis(500));
 
                 for (ConsumerRecord<String, SensorEventAvro> record : records) {
                     Optional<SensorsSnapshotAvro> sensorsSnapshotAvro = handler.handleKafkaMessage(record.value());
                     sensorsSnapshotAvro.ifPresent(producer::sendMessage);
                 }
-                consumer.commitSync();
             }
         } catch (WakeupException e) {
-            // Ожидаемое исключение при остановке
+
         } catch (Exception e) {
-            log.error("Сбой обработки события сенсора", e);
+            log.error("Exception while processing sensor event: ", e);
         } finally {
-            shutdown();
-        }
-    }
-    public void shutdown() {
-        try {
-            producer.flush();
-            consumer.commitSync();
-        } finally {
-            producer.close();
-            consumer.close();
+            try {
+                producer.flush();
+                consumer.commitSync();
+            } finally {
+                log.info("Closing consumer");
+                consumer.close();
+                log.info("Closing producer");
+                producer.close();
+            }
         }
     }
 }
