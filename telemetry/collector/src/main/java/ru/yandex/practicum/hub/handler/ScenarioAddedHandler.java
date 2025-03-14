@@ -2,6 +2,7 @@ package ru.yandex.practicum.hub.handler;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.DeviceActionProto;
 import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Slf4j
 public class ScenarioAddedHandler implements HubHandler {
     final HubProducer producer;
 
@@ -30,6 +32,9 @@ public class ScenarioAddedHandler implements HubHandler {
     @Override
     public void handle(HubEventProto eventProto) {
         ScenarioAddedEventProto scenarioAddedEventProto = eventProto.getScenarioAdded();
+
+        log.info("Handling ScenarioAdded event with name: {}", scenarioAddedEventProto.getName());
+        log.debug("Received ScenarioAdded event: {}", eventProto);
 
         HubEventAvro eventAvro = HubEventAvro.newBuilder()
                 .setHubId(eventProto.getHubId())
@@ -54,10 +59,15 @@ public class ScenarioAddedHandler implements HubHandler {
                 )
                 .build();
 
+        log.debug("Constructed HubEventAvro: {}", eventAvro);
+
         producer.sendMessage(eventAvro);
+        log.info("Successfully sent ScenarioAdded event for name: {}", scenarioAddedEventProto.getName());
     }
 
     private ScenarioConditionAvro mapScenarioCondition(ScenarioConditionProto scenarioConditionProto) {
+        log.debug("Mapping ScenarioConditionProto: {}", scenarioConditionProto);
+
         return ScenarioConditionAvro.newBuilder()
                 .setSensorId(scenarioConditionProto.getSensorId())
                 .setValue(scenarioConditionProto.getBoolValue())
@@ -67,6 +77,8 @@ public class ScenarioAddedHandler implements HubHandler {
     }
 
     private DeviceActionAvro mapDeviceAction(DeviceActionProto deviceActionProto) {
+        log.debug("Mapping DeviceActionProto: {}", deviceActionProto);
+
         return DeviceActionAvro.newBuilder()
                 .setSensorId(deviceActionProto.getSensorId())
                 .setValue(deviceActionProto.getValue())

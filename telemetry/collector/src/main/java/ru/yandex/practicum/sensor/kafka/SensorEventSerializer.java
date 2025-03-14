@@ -27,7 +27,7 @@ public class SensorEventSerializer implements Serializer<SensorEventAvro> {
 
             return stream.toByteArray();
         } catch (IOException e) {
-            throw new SerializationException("Ошибка сериализации SensorEvent", e);
+            throw new SerializationException("Serialization error for SensorEvent", e);
         }
     }
 }

@@ -20,10 +20,22 @@ public class HubProducer {
     }
 
     public void sendMessage(HubEventAvro event) {
+        log.info("Sending hub event with hub ID: {}", event.getHubId());
+        log.debug("Sending hub event: {}", event);
 
         ProducerRecord<String, HubEventAvro> producerRecord = new ProducerRecord<>(topic, event);
 
-        producer.send(producerRecord);
-        producer.flush();
+        try {
+            producer.send(producerRecord, (metadata, exception) -> {
+                if (exception == null) {
+                    log.info("Successfully sent hub event with hub ID: {}", event.getHubId());
+                } else {
+                    log.error("Error sending hub event with hub ID: {}. Exception: {}", event.getHubId(), exception.getMessage(), exception);
+                }
+            });
+            producer.flush();
+        } catch (Exception e) {
+            log.error("Exception occurred while sending hub event with hub ID: {}", event.getHubId(), e);
+        }
     }
 }

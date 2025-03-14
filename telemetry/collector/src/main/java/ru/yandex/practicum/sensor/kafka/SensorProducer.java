@@ -16,14 +16,22 @@ public class SensorProducer {
     final String topic;
 
     public void sendMessage(SensorEventAvro eventAvro) {
-        log.info("Отправление события сенсора {}", eventAvro.getId());
-        log.debug("Отправление события сенсора {}", eventAvro);
+        log.info("Sending sensor event with ID: {}", eventAvro.getId());
+        log.debug("Sending sensor event: {}", eventAvro);
 
         ProducerRecord<String, SensorEventAvro> producerRecord = new ProducerRecord<>(topic, eventAvro);
 
-        producer.send(producerRecord);
-        producer.flush();
-
-        log.info("Успешно отправлено событие сенсора {}", eventAvro.getId());
+        try {
+            producer.send(producerRecord, (metadata, exception) -> {
+                if (exception == null) {
+                    log.info("Successfully sent sensor event with ID: {}", eventAvro.getId());
+                } else {
+                    log.error("Error sending sensor event with ID: {}. Exception: {}", eventAvro.getId(), exception.getMessage(), exception);
+                }
+            });
+            producer.flush();
+        } catch (Exception e) {
+            log.error("Exception occurred while sending sensor event with ID: {}", eventAvro.getId(), e);
+        }
     }
 }
