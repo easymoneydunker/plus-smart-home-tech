@@ -16,17 +16,25 @@ public class SnapshotProducer {
     final String topic;
 
     public void sendMessage(SensorsSnapshotAvro eventAvro) {
-        log.info("Отправление снапшота хаба {}", eventAvro.getHubId());
+        log.info("Sending snapshot for hub: {}", eventAvro.getHubId());
         ProducerRecord<String, SensorsSnapshotAvro> producerRecord = new ProducerRecord<>(topic, eventAvro);
-        producer.send(producerRecord);
+        producer.send(producerRecord, (metadata, exception) -> {
+            if (exception != null) {
+                log.error("Failed to send snapshot for hub: {}", eventAvro.getHubId(), exception);
+            } else {
+                log.info("Snapshot sent successfully for hub: {} to topic: {}, partition: {}, offset: {}",
+                        eventAvro.getHubId(), metadata.topic(), metadata.partition(), metadata.offset());
+            }
+        });
     }
 
-
     public void flush() {
+        log.info("Flushing producer for topic: {}", topic);
         producer.flush();
     }
 
     public void close() {
+        log.info("Closing producer for topic: {}", topic);
         producer.close();
     }
 }

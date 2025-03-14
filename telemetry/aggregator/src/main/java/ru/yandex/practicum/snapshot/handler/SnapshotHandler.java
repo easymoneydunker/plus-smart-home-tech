@@ -27,31 +27,35 @@ public class SnapshotHandler {
         for (SensorHandler<? extends SpecificRecord> handler : handlers) {
             this.handlers.put(handler.getMessageType(), handler);
         }
+        log.info("Initialized SnapshotHandler with {} sensor handlers.", handlers.size());
     }
 
     public Optional<SensorsSnapshotAvro> handleKafkaMessage(SensorEventAvro eventAvro) {
         String hubId = eventAvro.getHubId();
+        log.debug("Processing event for hub: {}", hubId);
 
-        SensorsSnapshotAvro snapshot;
-        if (snapshots.containsKey(hubId)) {
-            snapshot = snapshots.get(hubId);
-        } else {
-            snapshot = SensorsSnapshotAvro.newBuilder()
-                    .setHubId(hubId)
-                    .setTimestamp(Instant.now())
-                    .setSensorsState(new HashMap<>())
-                    .build();
-        }
+        SensorsSnapshotAvro snapshot = snapshots.getOrDefault(hubId,
+                SensorsSnapshotAvro.newBuilder()
+                        .setHubId(hubId)
+                        .setTimestamp(Instant.now())
+                        .setSensorsState(new HashMap<>())
+                        .build());
+        log.debug("Processed snapshot with timestamp: {}", snapshot.getTimestamp());
 
-        if (!handlers.containsKey(eventAvro.getPayload().getClass())) {
+        Class<?> payloadClass = eventAvro.getPayload().getClass();
+        if (!handlers.containsKey(payloadClass)) {
+            log.warn("No handler registered for event type: {}", payloadClass.getSimpleName());
             return Optional.empty();
-        } else {
-            Optional<SensorsSnapshotAvro> result = handlers.get(eventAvro.getPayload().getClass())
-                    .handle(eventAvro, snapshot);
-
-            result.ifPresent(sensorsSnapshotAvro -> snapshots.put(hubId, sensorsSnapshotAvro));
-
-            return result;
         }
+
+        log.debug("Found handler for event type: {}", payloadClass.getSimpleName());
+        Optional<SensorsSnapshotAvro> result = handlers.get(payloadClass).handle(eventAvro, snapshot);
+
+        result.ifPresent(updatedSnapshot -> {
+            snapshots.put(hubId, updatedSnapshot);
+            log.info("Updated snapshot for hub: {}", hubId);
+        });
+
+        return result;
     }
 }

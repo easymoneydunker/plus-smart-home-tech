@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class SnapshotSerializer implements Serializer<SensorsSnapshotAvro> {
     @Override
-    public byte[] serialize(String s, SensorsSnapshotAvro event) {
+    public byte[] serialize(String topic, SensorsSnapshotAvro event) {
         if (event == null) {
             return null;
         }
@@ -24,10 +24,11 @@ public class SnapshotSerializer implements Serializer<SensorsSnapshotAvro> {
 
             writer.write(event, encoder);
             encoder.flush();
+            stream.flush();
 
             return stream.toByteArray();
         } catch (IOException e) {
-            throw new SerializationException("Ошибка сериализации SensorEvent", e);
+            throw new SerializationException("Failed to serialize SensorsSnapshotAvro for topic: " + topic, e);
         }
     }
 }
