@@ -27,7 +27,6 @@ public class BaseAvroDeserializer<T extends SpecificRecordBase> implements Deser
     }
 
     public BaseAvroDeserializer(DecoderFactory decoderFactory, Schema schema) {
-        log.debug("Initializing BaseAvroDeserializer with schema: {}", schema.getFullName());
         reader = new SpecificDatumReader<>(schema);
         decoder = decoderFactory;
     }
