@@ -27,24 +27,27 @@ import java.util.Properties;
 @PropertySource("classpath:application.yaml")
 public class SnapshotKafkaConfig {
     @Value("${kafka.constants.url}")
-    private String url;
+    private String kafkaUrl;
     @Value("${kafka.constants.sensor.topic}")
-    private String readTopic;
+    private String sensorTopic;
     @Value("${kafka.constants.snapshot.topic}")
-    private String writeTopic;
+    private String snapshotTopic;
+    @Value("${kafka.constants.consumer.group-id}")
+    private String consumerGroupId;
+    @Value("${kafka.constants.consumer.auto-offset-reset}")
+    private String autoOffsetReset;
 
     @Bean
     public AggregatorStarter aggregatorStarter(SnapshotProducer producer, SnapshotHandler handler) {
         Properties properties = new Properties();
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "snapshot");
-        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaUrl);
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupId);
+        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, VoidDeserializer.class);
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, SensorAvroDeserializer.class);
 
         Consumer<String, SensorEventAvro> consumer = new KafkaConsumer<>(properties);
-        consumer.subscribe(List.of(readTopic));
+        consumer.subscribe(List.of(sensorTopic));
 
         return new AggregatorStarter(consumer, producer, handler);
     }
@@ -52,12 +55,12 @@ public class SnapshotKafkaConfig {
     @Bean
     public SnapshotProducer snapshotProducer() {
         Properties properties = new Properties();
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, url);
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaUrl);
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, VoidSerializer.class);
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, SnapshotSerializer.class);
 
         Producer<String, SensorsSnapshotAvro> producer = new KafkaProducer<>(properties);
 
-        return new SnapshotProducer(producer, writeTopic);
+        return new SnapshotProducer(producer, snapshotTopic);
     }
 }

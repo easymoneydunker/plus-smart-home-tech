@@ -22,9 +22,9 @@ import java.util.Optional;
 @Component
 @Slf4j
 public class AggregatorStarter {
-    final Consumer<String, SensorEventAvro> consumer;
-    final SnapshotProducer producer;
-    final SnapshotHandler handler;
+    private final Consumer<String, SensorEventAvro> consumer;
+    private final SnapshotProducer producer;
+    private final SnapshotHandler handler;
 
     public void start() {
         try {
@@ -38,7 +38,7 @@ public class AggregatorStarter {
                 }
             }
         } catch (WakeupException e) {
-
+            log.info("Kafka consumer wakeup signal received. Procceding to shutdown");
         } catch (Exception e) {
             log.error("Exception while processing sensor event: ", e);
         } finally {
