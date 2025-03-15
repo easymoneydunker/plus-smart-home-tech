@@ -89,8 +89,6 @@ public class ScenarioAddedHandler extends HubEventHandler<ScenarioAddedEventAvro
                     condition.setValue((Integer) value);
                 } else if (value instanceof Boolean) {
                     condition.setValue((Boolean) value ? 1 : 0);
-                } else {
-                    throw new IllegalArgumentException("Unsupported value type: " + value);
                 }
 
                 condition.setConditionSource(source);

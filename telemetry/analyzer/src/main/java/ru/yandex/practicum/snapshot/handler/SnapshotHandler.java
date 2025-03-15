@@ -20,7 +20,6 @@ import ru.yandex.practicum.snapshot.service.SnapshotService;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
