@@ -68,13 +68,22 @@ public class ScenarioAddedHandler implements HubHandler {
     private ScenarioConditionAvro mapScenarioCondition(ScenarioConditionProto scenarioConditionProto) {
         log.debug("Mapping ScenarioConditionProto: {}", scenarioConditionProto);
 
-        return ScenarioConditionAvro.newBuilder()
+        ScenarioConditionAvro.Builder builder = ScenarioConditionAvro.newBuilder()
                 .setSensorId(scenarioConditionProto.getSensorId())
-                .setValue(scenarioConditionProto.getBoolValue())
                 .setOperation(ConditionOperationAvro.valueOf(scenarioConditionProto.getOperation().name()))
-                .setType(ConditionTypeAvro.valueOf(scenarioConditionProto.getType().name()))
-                .build();
+                .setType(ConditionTypeAvro.valueOf(scenarioConditionProto.getType().name()));
+
+        if (scenarioConditionProto.hasIntValue()) {
+            builder.setValue(scenarioConditionProto.getIntValue());
+            log.debug("Setting int value: {}", scenarioConditionProto.getIntValue());
+        } else if (scenarioConditionProto.hasBoolValue()) {
+            builder.setValue(scenarioConditionProto.getBoolValue());
+            log.debug("Setting bool value: {}", scenarioConditionProto.getBoolValue());
+        }
+
+        return builder.build();
     }
+
 
     private DeviceActionAvro mapDeviceAction(DeviceActionProto deviceActionProto) {
         log.debug("Mapping DeviceActionProto: {}", deviceActionProto);
