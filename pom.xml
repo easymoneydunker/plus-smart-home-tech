@@ -22,8 +22,7 @@
     </modules>
 
     <properties>
-        <java.version>21</java.version>
-
+        <java.version>19</java.version>
         <avro.version>1.11.3</avro.version>
         <kafka-clients.version>3.6.1</kafka-clients.version>
         <springdoc-openapi-starter.version>2.6.0</springdoc-openapi-starter.version>
@@ -104,7 +103,11 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven-compiler-plugin.version}</version>
+                    <version>3.8.1</version>
+                    <configuration>
+                        <source>23</source>
+                        <target>23</target>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.avro</groupId>
