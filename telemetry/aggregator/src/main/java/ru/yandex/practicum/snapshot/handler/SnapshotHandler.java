@@ -4,10 +4,13 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorStateAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
+import ru.yandex.practicum.snapshot.AggregatorStarter;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -18,11 +21,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SnapshotHandler {
     final Map<String, SensorsSnapshotAvro> snapshots;
     final Map<Class<? extends SpecificRecord>, SensorHandler<? extends SpecificRecord>> handlers;
+    private static final Logger log = LoggerFactory.getLogger(SnapshotHandler.class);
 
     public SnapshotHandler(List<SensorHandler<? extends SpecificRecord>> handlers) {
         snapshots = new HashMap<>();

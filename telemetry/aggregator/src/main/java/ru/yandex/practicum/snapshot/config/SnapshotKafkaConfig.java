@@ -61,6 +61,6 @@ public class SnapshotKafkaConfig {
 
         Producer<String, SensorsSnapshotAvro> producer = new KafkaProducer<>(properties);
 
-        return new SnapshotProducer(producer, snapshotTopic);
+        return new SnapshotProducer(snapshotTopic, producer);
     }
 }

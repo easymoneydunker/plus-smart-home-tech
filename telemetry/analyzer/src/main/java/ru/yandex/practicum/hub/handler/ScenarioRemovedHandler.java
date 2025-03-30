@@ -1,10 +1,9 @@
 package ru.yandex.practicum.hub.handler;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.avro.specific.SpecificRecordBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.hub.repository.ScenarioRepository;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
@@ -12,10 +11,13 @@ import ru.yandex.practicum.kafka.telemetry.event.ScenarioRemovedEventAvro;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Component
-@AllArgsConstructor
-@Slf4j
 public class ScenarioRemovedHandler extends HubEventHandler<ScenarioRemovedEventAvro> {
+    private static final Logger log = LoggerFactory.getLogger(ScenarioRemovedHandler.class);
     final ScenarioRepository repository;
+
+    public ScenarioRemovedHandler(ScenarioRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public Class<ScenarioRemovedEventAvro> getType() {
@@ -27,11 +29,11 @@ public class ScenarioRemovedHandler extends HubEventHandler<ScenarioRemovedEvent
         ScenarioRemovedEventAvro eventAvro = instance(hubEventAvro.getPayload(), ScenarioRemovedEventAvro.class);
 
         if (eventAvro != null) {
-            log.info("Удаление сценария хаба " + hubEventAvro.getHubId());
+            log.info("Удаление сценария хаба {}", hubEventAvro.getHubId());
 
             repository.deleteByHubIdAndName(hubEventAvro.getHubId(), eventAvro.getName());
 
-            log.info("Удалён сценарий хаба " + hubEventAvro.getHubId());
+            log.info("Удалён сценарий хаба {}", hubEventAvro.getHubId());
         }
     }
 }

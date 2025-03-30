@@ -3,6 +3,8 @@ package ru.yandex.practicum.hub.handler;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.DeviceAddedEventProto;
@@ -16,9 +18,9 @@ import java.time.Instant;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Slf4j
 public class DeviceAddedHandler implements HubHandler {
     final HubProducer producer;
+    final Logger log = LoggerFactory.getLogger(DeviceAddedHandler.class);
 
     @Autowired
     public DeviceAddedHandler(HubProducer producer) {

@@ -1,16 +1,18 @@
 package ru.yandex.practicum.snapshot.handler;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorStateAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
 
-import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 
-@Slf4j
+
 public abstract class SensorHandler<T> {
+    private static final Logger log = LoggerFactory.getLogger(SensorHandler.class);
+
     public abstract Class<T> getMessageType();
 
     Optional<Map<String, SensorStateAvro>> handle(SensorEventAvro eventAvro, SensorsSnapshotAvro snapshot) {

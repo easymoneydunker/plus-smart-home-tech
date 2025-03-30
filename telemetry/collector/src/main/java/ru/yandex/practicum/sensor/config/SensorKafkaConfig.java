@@ -34,6 +34,6 @@ public class SensorKafkaConfig {
 
         Producer<String, SensorEventAvro> producer = new KafkaProducer<>(properties);
 
-        return new SensorProducer(producer, topic);
+        return new SensorProducer(topic, producer);
     }
 }

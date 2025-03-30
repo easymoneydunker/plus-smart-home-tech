@@ -1,10 +1,9 @@
 package ru.yandex.practicum.hub.handler;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.avro.specific.SpecificRecordBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.hub.model.Sensor;
 import ru.yandex.practicum.hub.repository.SensorRepository;
@@ -13,10 +12,13 @@ import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Component
-@AllArgsConstructor
-@Slf4j
 public class DeviceAddedHandler extends HubEventHandler<DeviceAddedEventAvro> {
+    private static final Logger log = LoggerFactory.getLogger(DeviceAddedHandler.class);
     final SensorRepository repository;
+
+    public DeviceAddedHandler(SensorRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public Class<DeviceAddedEventAvro> getType() {

@@ -1,5 +1,7 @@
 package ru.yandex.practicum.hub.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.yandex.practicum.hub.kafka.HubProducer;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,9 +17,9 @@ import java.time.Instant;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Slf4j
 public class ScenarioRemovedHandler implements HubHandler {
     final HubProducer producer;
+    final Logger log = LoggerFactory.getLogger(ScenarioRemovedHandler.class);
 
     public ScenarioRemovedHandler(HubProducer producer) {
         this.producer = producer;
