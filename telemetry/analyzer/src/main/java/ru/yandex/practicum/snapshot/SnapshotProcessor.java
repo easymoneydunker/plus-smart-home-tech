@@ -1,12 +1,12 @@
 package ru.yandex.practicum.snapshot;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
 import ru.yandex.practicum.snapshot.handler.SnapshotHandler;
@@ -14,12 +14,16 @@ import ru.yandex.practicum.snapshot.handler.SnapshotHandler;
 import java.time.Duration;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@AllArgsConstructor
 @Component
-@Slf4j
 public class SnapshotProcessor implements Runnable {
+    private static final Logger log = LoggerFactory.getLogger(SnapshotProcessor.class);
     final Consumer<String, SensorsSnapshotAvro> consumer;
     final SnapshotHandler handler;
+
+    public SnapshotProcessor(Consumer<String, SensorsSnapshotAvro> consumer, SnapshotHandler handler) {
+        this.consumer = consumer;
+        this.handler = handler;
+    }
 
     @Override
     public void run() {
@@ -33,7 +37,7 @@ public class SnapshotProcessor implements Runnable {
                     handler.handle(record.value());
                 }
             }
-        }  catch (Exception e) {
+        } catch (Exception e) {
             log.error("Сбой обработки события", e);
         } finally {
             try {

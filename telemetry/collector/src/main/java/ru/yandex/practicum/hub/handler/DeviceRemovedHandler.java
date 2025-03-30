@@ -3,6 +3,8 @@ package ru.yandex.practicum.hub.handler;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.DeviceRemovedEventProto;
 import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
@@ -14,9 +16,9 @@ import java.time.Instant;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Slf4j
 public class DeviceRemovedHandler implements HubHandler {
     final HubProducer producer;
+    final Logger log = LoggerFactory.getLogger(DeviceRemovedHandler.class);
 
     public DeviceRemovedHandler(HubProducer producer) {
         this.producer = producer;

@@ -6,13 +6,15 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Slf4j
 public class HubProducer {
     final String topic;
     final Producer<String, HubEventAvro> producer;
+    final Logger log = LoggerFactory.getLogger(HubProducer.class);
 
     public HubProducer(String topic, Producer<String, HubEventAvro> producer) {
         this.topic = topic;

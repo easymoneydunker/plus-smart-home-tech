@@ -6,14 +6,22 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.yandex.practicum.hub.kafka.HubProducer;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@AllArgsConstructor
-@Slf4j
+
 public class SensorProducer {
-    Producer<String, SensorEventAvro> producer;
+    final Producer<String, SensorEventAvro> producer;
     final String topic;
+    final Logger log = LoggerFactory.getLogger(SensorProducer.class);
+
+    public SensorProducer(String topic, Producer<String, SensorEventAvro> producer) {
+        this.topic = topic;
+        this.producer = producer;
+    }
 
     public void sendMessage(SensorEventAvro eventAvro) {
         log.info("Sending sensor event with ID: {}", eventAvro.getId());

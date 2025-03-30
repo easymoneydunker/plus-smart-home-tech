@@ -8,6 +8,8 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.errors.WakeupException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
@@ -18,13 +20,18 @@ import java.time.Duration;
 import java.util.Optional;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@AllArgsConstructor
 @Component
-@Slf4j
 public class AggregatorStarter {
+    private static final Logger log = LoggerFactory.getLogger(AggregatorStarter.class);
     private final Consumer<String, SensorEventAvro> consumer;
     private final SnapshotProducer producer;
     private final SnapshotHandler handler;
+
+    public AggregatorStarter(Consumer<String, SensorEventAvro> consumer, SnapshotProducer producer, SnapshotHandler handler) {
+        this.consumer = consumer;
+        this.producer = producer;
+        this.handler = handler;
+    };
 
     public void start() {
         try {

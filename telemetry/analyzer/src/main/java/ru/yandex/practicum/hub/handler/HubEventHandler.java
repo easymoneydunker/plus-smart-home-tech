@@ -1,10 +1,13 @@
 package ru.yandex.practicum.hub.handler;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 
-@Slf4j
+
 public abstract class HubEventHandler<T> {
+    private static final Logger log = LoggerFactory.getLogger(HubEventHandler.class);
+
     public abstract Class<T> getType();
 
     public abstract void handle(HubEventAvro hubEventAvro);

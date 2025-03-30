@@ -1,9 +1,9 @@
 package ru.yandex.practicum.hub.handler;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.hub.model.*;
 import ru.yandex.practicum.hub.repository.ScenarioRepository;
@@ -18,11 +18,15 @@ import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Component
-@AllArgsConstructor
-@Slf4j
 public class ScenarioAddedHandler extends HubEventHandler<ScenarioAddedEventAvro> {
+    private static final Logger log = LoggerFactory.getLogger(ScenarioAddedHandler.class);
     final SensorRepository sensorRepository;
     final ScenarioRepository scenarioRepository;
+
+    public ScenarioAddedHandler(SensorRepository sensorRepository, ScenarioRepository scenarioRepository) {
+        this.sensorRepository = sensorRepository;
+        this.scenarioRepository = scenarioRepository;
+    }
 
     @Override
     public Class<ScenarioAddedEventAvro> getType() {
