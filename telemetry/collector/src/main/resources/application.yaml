@@ -1,4 +1,10 @@
-kafka.constants:
-  url: "localhost:9092"
-  hub.topic: "telemetry.hubs.v1"
-  sensor.topic: "telemetry.sensors.v1"
+#kafka.constants:
+#  url: "localhost:9092"
+#  hub.topic: "telemetry.hubs.v1"
+#  sensor.topic: "telemetry.sensors.v1"
+
+spring:
+  application:
+    name: collector
+  config:
+    import: configserver:http://localhost:8888

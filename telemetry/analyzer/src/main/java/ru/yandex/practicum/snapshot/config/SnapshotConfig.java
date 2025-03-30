@@ -5,6 +5,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.VoidDeserializer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -17,18 +18,12 @@ import java.util.List;
 import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:application.yaml")
+@ConfigurationProperties("analyzer.snapshot.kafka")
 public class SnapshotConfig {
-    private final String url;
-    private final String topic;
-
-    public SnapshotConfig(
-            @Value("${kafka.constants.url}") String url,
-            @Value("${kafka.constants.snapshot.topic}") String topic
-    ) {
-        this.url = url;
-        this.topic = topic;
-    }
+    @Value("${kafka.constants.url}")
+    private String url;
+    @Value("${kafka.constants.snapshot.topic}")
+    private String topic;
 
     @Bean
     public SnapshotProcessor snapshotProcessor(SnapshotHandler handler) {

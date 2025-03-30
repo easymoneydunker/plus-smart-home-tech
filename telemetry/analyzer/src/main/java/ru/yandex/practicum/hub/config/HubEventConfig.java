@@ -6,6 +6,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.VoidDeserializer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.yandex.practicum.hub.HubEventProcessor;
@@ -21,17 +22,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Configuration
+@ConfigurationProperties("analyzer.hub.kafka")
 public class HubEventConfig {
-    private final String url;
-    private final String topic;
-
-    public HubEventConfig(
-            @Value("${kafka.constants.url}") String url,
-            @Value("${kafka.constants.hub.topic}") String topic
-    ) {
-        this.url = url;
-        this.topic = topic;
-    }
+    @Value("${kafka.constants.url}")
+    private String url;
+    @Value("${kafka.constants.hub.topic}")
+    private String topic;
 
     @Bean
     public HubEventProcessor hubEventProcessor(Set<HubEventHandler> handlers) {

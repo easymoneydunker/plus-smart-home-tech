@@ -9,6 +9,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.VoidDeserializer;
 import org.apache.kafka.common.serialization.VoidSerializer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:application.yaml")
+@ConfigurationProperties("aggregator.kafka")
 public class SnapshotKafkaConfig {
     @Value("${kafka.constants.url}")
     private String kafkaUrl;
