@@ -11,9 +11,8 @@ import ru.yandex.practicum.feign.ErrorDecoderConfig;
 @EnableDiscoveryClient
 @ConfigurationPropertiesScan
 @EnableFeignClients(defaultConfiguration = ErrorDecoderConfig.class)
-public class ShoppingStoreServer {
-
+public class WarehouseApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ShoppingStoreServer.class, args);
+        SpringApplication.run(WarehouseApplication.class, args);
     }
 }
