@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: shopping-store
+  config:
+    import: "configserver:"
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
