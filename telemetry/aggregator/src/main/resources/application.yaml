@@ -16,7 +16,7 @@ spring:
   application:
     name: aggregator
   config:
-    import: configserver:http://localhost:8888
+    import: "configserver:"
 
 eureka:
   client:
